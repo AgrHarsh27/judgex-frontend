@@ -18,7 +18,7 @@
 - **🛡️ Admin Console**: Dedicated dashboard for administrators to add new coding problems, define custom test cases, and manage users.
 - **📊 Submission History & Metrics**: Track historical submission verdicts (Accepted, Wrong Answer, Time Limit Exceeded, Runtime Error).
 - **🔒 Authentication & Role-Based Access**: Secure JWT authentication with separate access levels for Coders and Admins.
-- **⚙️ Dynamic Backend Endpoint Switcher**: Integrated connection switcher with exponential retry and proxy fallback to handle free-tier cold starts seamlessly.
+- **⚡ Automatic API Proxy & Exponential Retry**: Integrated API communication with automatic retries to handle Render free-tier cold starts seamlessly.
 - **💎 Dark Glassmorphic Design**: Modern, responsive UI designed with HSL color palettes and smooth animations.
 
 ---
@@ -66,7 +66,6 @@ The development server is configured with an automatic Vite API proxy (`/api`) t
 
 The API communication is managed in [`src/api.js`](src/api.js):
 - **Default Dev Proxy**: `/api` mapped to `https://judgex-backend-kcdo.onrender.com` via [`vite.config.js`](vite.config.js).
-- **CORS Fallback**: Automatically retries direct URL requests via the `/api` proxy if browser CORS blocks external requests.
 - **Health Check Polling**: Periodically polls backend status to wake up free-tier Render instances on cold starts.
 
 ---
@@ -113,7 +112,6 @@ frontend/
 │   │   ├── Navbar.jsx          # Header navigation & status indicator
 │   │   ├── ProblemDetail.jsx   # Problem statement & Monaco Editor
 │   │   ├── ProblemList.jsx     # Main arena problem listing
-│   │   ├── SettingsModal.jsx   # Backend URL configuration modal
 │   │   └── SubmissionsView.jsx # Historical submissions view
 │   ├── context/
 │   │   └── AuthContext.jsx # Authentication & submission state

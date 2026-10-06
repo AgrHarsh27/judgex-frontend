@@ -6,7 +6,6 @@ export const Navbar = ({
   activeTab, 
   setActiveTab, 
   onOpenAuth, 
-  onOpenSettings,
   isBackendConnected,
   isCheckingHealth 
 }) => {
@@ -66,19 +65,14 @@ export const Navbar = ({
 
         {/* Status Indicator & User Controls */}
         <div className="nav-actions">
-          {/* Clickable Status Pill for Settings */}
-          <button
-            onClick={onOpenSettings}
-            className={`status-pill cursor-pointer transition-all hover:brightness-110 ${
-              isCheckingHealth 
-                ? 'status-connecting' 
-                : isBackendConnected 
-                  ? 'status-online' 
-                  : 'status-offline'
-            }`}
-            title="Click to configure backend API settings"
-            style={{ cursor: 'pointer', border: 'none' }}
-          >
+          {/* Status Indicator Pill */}
+          <div className={`status-pill ${
+            isCheckingHealth 
+              ? 'status-connecting' 
+              : isBackendConnected 
+                ? 'status-online' 
+                : 'status-offline'
+          }`}>
             {isCheckingHealth ? (
               <>
                 <RefreshCw size={13} style={{ animation: 'spin 1s linear infinite' }} />
@@ -95,7 +89,7 @@ export const Navbar = ({
                 <span>Backend Offline</span>
               </>
             )}
-          </button>
+          </div>
 
           {/* User Account Button or Badge */}
           {isAuthenticated ? (

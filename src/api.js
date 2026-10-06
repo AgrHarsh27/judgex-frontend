@@ -1,17 +1,4 @@
-const DEFAULT_API_URL = '/api';
-
-export const getApiBaseUrl = () => {
-  return localStorage.getItem('judgex_api_url') || DEFAULT_API_URL;
-};
-
-export const setApiBaseUrl = (url) => {
-  if (!url || url.trim() === '' || url === DEFAULT_API_URL) {
-    localStorage.removeItem('judgex_api_url');
-  } else {
-    // Remove trailing slash if present
-    localStorage.setItem('judgex_api_url', url.trim().replace(/\/+$/, ''));
-  }
-};
+const API_BASE_URL = '/api';
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem('judgex_token');
@@ -26,10 +13,7 @@ const getAuthHeaders = () => {
 
 // Request with exponential backoff retry to handle Render free-tier cold starts
 async function request(endpoint, options = {}, retries = 3, delay = 1500) {
-  const baseUrl = getApiBaseUrl();
-  let primaryUrl = baseUrl.startsWith('http') || baseUrl.startsWith('/')
-    ? `${baseUrl}${endpoint}`
-    : `/${baseUrl}${endpoint}`;
+  const primaryUrl = `${API_BASE_URL}${endpoint}`;
 
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
@@ -49,12 +33,6 @@ async function request(endpoint, options = {}, retries = 3, delay = 1500) {
 
       return data;
     } catch (err) {
-      // If primaryUrl was an external absolute URL and failed (e.g. browser CORS block), try relative '/api' proxy
-      if (primaryUrl.startsWith('http') && primaryUrl !== `/api${endpoint}`) {
-        console.warn(`[JudgeX API] Direct call to ${primaryUrl} failed (${err.message}). Trying proxy fallback /api${endpoint}`);
-        primaryUrl = `/api${endpoint}`;
-      }
-
       if (attempt < retries) {
         console.warn(`[JudgeX API] Attempt ${attempt} failed for ${primaryUrl}. Retrying in ${delay}ms...`);
         await new Promise((resolve) => setTimeout(resolve, delay));
@@ -105,28 +83,13 @@ export const api = {
     request('/users'),
 
   checkHealth: async () => {
-    const baseUrl = getApiBaseUrl();
-    const testUrl = baseUrl.startsWith('http') || baseUrl.startsWith('/')
-      ? `${baseUrl}/problems`
-      : `/${baseUrl}/problems`;
-
     try {
-      const res = await fetch(testUrl, { method: 'GET' });
-      if (res.ok) return true;
-    } catch (err) {
-      console.warn(`[JudgeX API] Health check to ${testUrl} failed:`, err);
+      const res = await fetch(`${API_BASE_URL}/problems`, { method: 'GET' });
+      return res.ok;
+    } catch {
+      return false;
     }
-
-    // Try fallback proxy if primary failed
-    if (baseUrl !== '/api') {
-      try {
-        const res = await fetch('/api/problems', { method: 'GET' });
-        return res.ok;
-      } catch {
-        return false;
-      }
-    }
-    return false;
   }
 };
+
 

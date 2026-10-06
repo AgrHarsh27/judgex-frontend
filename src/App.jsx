@@ -6,7 +6,6 @@ import { ProblemDetail } from './components/ProblemDetail';
 import { AdminPanel } from './components/AdminPanel';
 import { SubmissionsView } from './components/SubmissionsView';
 import { AuthModal } from './components/AuthModal';
-import { SettingsModal } from './components/SettingsModal';
 import { api } from './api';
 
 function MainLayout() {
@@ -19,7 +18,6 @@ function MainLayout() {
 
   // Modals
   const [isAuthOpen, setIsAuthOpen] = useState(false);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   // Fetch problems & check backend connection
   const fetchProblems = async () => {
@@ -76,7 +74,6 @@ function MainLayout() {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         onOpenAuth={() => setIsAuthOpen(true)}
-        onOpenSettings={() => setIsSettingsOpen(true)}
         isBackendConnected={isBackendConnected}
         isCheckingHealth={isCheckingHealth}
       />
@@ -119,13 +116,6 @@ function MainLayout() {
       <AuthModal
         isOpen={isAuthOpen}
         onClose={() => setIsAuthOpen(false)}
-      />
-
-      {/* Settings Modal */}
-      <SettingsModal
-        isOpen={isSettingsOpen}
-        onClose={() => setIsSettingsOpen(false)}
-        onConfigSaved={fetchProblems}
       />
     </div>
   );
